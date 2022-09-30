@@ -1,5 +1,6 @@
 import torch
 from torch import optim
+from dataclasses import dataclass
 
 import ser.model
 import ser.transforms 
@@ -7,6 +8,17 @@ import ser.data
 import ser.train
 import ser.validate
 import ser.manage_exp_dir
+
+
+
+
+@dataclass
+class HyperParams:
+    name: str
+    epochs: int
+    batch_size: str
+    learning_rate: float
+
 
 import typer
 
@@ -29,12 +41,13 @@ def train(
     ),
 ):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    hyperparams = HyperParams(name, epochs, batch_size, learning_rate)
 
     # Create experiment dir
     exp_dir = ser.manage_exp_dir.create_exp_dir(name)
 
     # Save model parameters!
-    ser.manage_exp_dir.save_model_params(exp_dir, name, epochs, batch_size, learning_rate)
+    ser.manage_exp_dir.save_model_params(exp_dir, hyperparams)
 
     # load model
     model = ser.model.Net().to(device)
@@ -72,7 +85,7 @@ def train(
             best_model = model
 
     # Update model params
-    ser.manage_exp_dir.save_model_params(exp_dir, name, epochs, batch_size, learning_rate, best_val_acc=best_val_acc, best_val_acc_epoch=best_epoch)
+    ser.manage_exp_dir.save_model_params(exp_dir, hyperparams, best_val_acc=best_val_acc, best_val_acc_epoch=best_epoch)
     ser.manage_exp_dir.save_model(exp_dir, best_model, name)
     
 
