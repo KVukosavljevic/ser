@@ -2,6 +2,7 @@ import torch
 from torch import optim
 from dataclasses import dataclass
 import git
+import sys
 
 import ser.model
 import ser.transforms 
@@ -22,6 +23,20 @@ import typer
 
 main = typer.Typer()
 
+def check_commits(repo):
+
+    changed = [ item.a_path for item in repo.index.diff(None) ]
+    print(repo, changed, repo.untracked_files) 
+
+    if (len(repo.untracked_files) + len(changed) ) > 0:
+        print('There are uncommitted changes with this run.')
+        print('Changed: ', changed)
+        print('Untracked: ', repo.untracked_files)
+        sys.exit("Error message")
+    
+    
+    print('Everything good')
+
 
 @main.command()
 def train(
@@ -37,9 +52,14 @@ def train(
     learning_rate: float = typer.Option(
         ..., "--learning_rate", help="Training learning rate."
     ),
+    track_commits: int = typer.Option(
+        ..., "--track_commits", help="Output warning if there are uncommitted changes."
+    ),
 ):
     repo = git.Repo(search_parent_directories=True)
     sha = repo.head.object.hexsha
+
+    if track_commits == 1: check_commits(repo)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     hyperparams = HyperParams(name, epochs, batch_size, learning_rate, sha)
