@@ -3,10 +3,9 @@ import torch
 from torch import optim
 
 import torch.nn.functional as F
-from torch.utils.data import DataLoader
-from torchvision import datasets
 import ser.model
-from ser.transforms import transforms
+import ser.transforms 
+import ser.data
 
 import typer
 
@@ -43,24 +42,10 @@ def train(
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
     # torch transforms
-    ts = transforms()
+    ts = ser.transforms.transforms()
     
-    
-
-    # dataloaders
-    training_dataloader = DataLoader(
-        datasets.MNIST(root="../data", download=True, train=True, transform=ts),
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=1,
-    )
-
-    validation_dataloader = DataLoader(
-        datasets.MNIST(root=DATA_DIR, download=True, train=False, transform=ts),
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=1,
-    )
+    # get dataloaders
+    training_dataloader, validation_dataloader = ser.data.get_dataloaders(batch_size, DATA_DIR, ts)
 
     # train
     for epoch in range(epochs):
