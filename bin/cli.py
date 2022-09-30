@@ -1,7 +1,5 @@
-from pathlib import Path
 import torch
 from torch import optim
-
 
 import ser.model
 import ser.transforms 
@@ -13,9 +11,6 @@ import typer
 
 main = typer.Typer()
 
-PROJECT_ROOT = Path(__file__).parent.parent
-DATA_DIR = PROJECT_ROOT / "data"
-
 
 @main.command()
 def train(
@@ -23,13 +18,13 @@ def train(
         ..., "-n", "--name", help="Name of experiment to save under."
     ),
     epochs: int = typer.Option(
-        ..., "-epochs", help="Number of epochs to run."
+        ..., "--epochs", help="Number of epochs to run."
     ),
     batch_size: int = typer.Option(
-        ..., "-batch_size", help="Data batch size."
+        ..., "--batch_size", help="Data batch size."
     ),
     learning_rate: float = typer.Option(
-        ..., "-learning_rate", help="Training learning rate."
+        ..., "--learning_rate", help="Training learning rate."
     ),
 ):
     print(f"Running experiment {name}")
@@ -47,7 +42,7 @@ def train(
     ts = ser.transforms.transforms()
     
     # get dataloaders
-    training_dataloader, validation_dataloader = ser.data.get_dataloaders(batch_size, DATA_DIR, ts)
+    training_dataloader, validation_dataloader = ser.data.get_dataloaders(batch_size, ts)
 
     # train
     for epoch in range(epochs):
