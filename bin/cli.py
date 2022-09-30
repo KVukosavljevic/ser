@@ -1,6 +1,7 @@
 import torch
 from torch import optim
 from dataclasses import dataclass
+import git
 
 import ser.model
 import ser.transforms 
@@ -9,16 +10,13 @@ import ser.train
 import ser.validate
 import ser.manage_exp_dir
 
-
-
-
 @dataclass
 class HyperParams:
     name: str
     epochs: int
     batch_size: str
     learning_rate: float
-
+    git_commit_hash : str
 
 import typer
 
@@ -40,8 +38,11 @@ def train(
         ..., "--learning_rate", help="Training learning rate."
     ),
 ):
+    repo = git.Repo(search_parent_directories=True)
+    sha = repo.head.object.hexsha
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    hyperparams = HyperParams(name, epochs, batch_size, learning_rate)
+    hyperparams = HyperParams(name, epochs, batch_size, learning_rate, sha)
 
     # Create experiment dir
     exp_dir = ser.manage_exp_dir.create_exp_dir(name)
