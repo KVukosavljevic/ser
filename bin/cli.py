@@ -49,7 +49,15 @@ def train(
     training_dataloader, validation_dataloader = ser.data.get_dataloaders(batch_size, DATA_DIR, ts)
 
     # train
-    ser.train.train(model, epochs, training_dataloader, validation_dataloader, optimizer, device)
+    for epoch in range(epochs):
+
+        loss = ser.train.train(model, epoch, training_dataloader, validation_dataloader, optimizer, device)
+        print(
+            f"Train Epoch: {epoch}"
+            f"| Loss: {loss.item():.4f}"
+        )
+
+
 
 @main.command()
 def infer():
