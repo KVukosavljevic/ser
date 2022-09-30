@@ -34,7 +34,6 @@ def check_commits(repo):
         print('Untracked: ', repo.untracked_files)
         sys.exit("Error message")
     
-    
     print('Everything good')
 
 

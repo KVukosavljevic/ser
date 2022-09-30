@@ -9,9 +9,8 @@ EXP_DIR = PROJECT_ROOT / "results"
 
 def create_exp_dir(name, exp_dir=EXP_DIR):
 
-    today = date.today().strftime("%d%m%Y")
-    time = datetime.now().strftime("%H%M")
-    exp_dir = exp_dir / name / (today+time)
+    time = datetime.now().strftime("%d-%m-%Y-%H-%M")
+    exp_dir = exp_dir / name / time
 
     exp_dir.mkdir(parents=True, exist_ok=True)
 
@@ -29,4 +28,4 @@ def save_model_params(exp_dir, hyperparams, best_val_acc = 0.0, best_val_acc_epo
 
 
 def save_model(exp_dir, model,name):
-    torch.save(model, exp_dir / (name + "_model") )
+    torch.save(model, exp_dir / (name + "_model.pt") )
