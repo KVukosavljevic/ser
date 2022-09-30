@@ -11,16 +11,7 @@ import ser.train
 import ser.validate
 import ser.manage_exp_dir
 
-@dataclass
-class HyperParams:
-    name: str
-    epochs: int
-    batch_size: str
-    learning_rate: float
-    git_commit_hash : str
-
 import typer
-
 main = typer.Typer()
 
 def check_commits(repo):
@@ -36,6 +27,13 @@ def check_commits(repo):
     
     print('Everything good')
 
+@dataclass
+class HyperParams:
+    name: str
+    epochs: int
+    batch_size: str
+    learning_rate: float
+    git_commit_hash : str
 
 @main.command()
 def train(
@@ -52,7 +50,7 @@ def train(
         ..., "--learning_rate", help="Training learning rate."
     ),
     track_commits: int = typer.Option(
-        ..., "--track_commits", help="Output warning if there are uncommitted changes."
+        1,"--track_commits", help="Output warning if there are uncommitted changes."
     ),
 ):
     repo = git.Repo(search_parent_directories=True)
