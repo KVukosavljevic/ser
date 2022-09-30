@@ -7,6 +7,7 @@ import ser.model
 import ser.transforms 
 import ser.data
 import ser.train
+import ser.validate
 
 import typer
 
@@ -51,12 +52,16 @@ def train(
     # train
     for epoch in range(epochs):
 
-        loss = ser.train.train(model, epoch, training_dataloader, validation_dataloader, optimizer, device)
+        loss = ser.train.train(model, training_dataloader, optimizer, device)
         print(
             f"Train Epoch: {epoch}"
             f"| Loss: {loss.item():.4f}"
         )
 
+        val_loss, val_acc = ser.validate.validate(model, validation_dataloader, device)
+        print(
+            f"Val Epoch: {epoch} | Avg Loss: {val_loss:.4f} | Accuracy: {val_acc}"
+        )
 
 
 @main.command()
