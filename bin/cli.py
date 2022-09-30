@@ -6,6 +6,7 @@ import ser.transforms
 import ser.data
 import ser.train
 import ser.validate
+import ser.manage_exp_dir
 
 import typer
 
@@ -27,10 +28,13 @@ def train(
         ..., "--learning_rate", help="Training learning rate."
     ),
 ):
-    print(f"Running experiment {name}")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # save the parameters!
+    # Create experiment dir
+    exp_dir = ser.manage_exp_dir.create_exp_dir(name)
+
+    # Save model parameters!
+    ser.manage_exp_dir.save_model_params(exp_dir, name, epochs, batch_size, learning_rate)
 
     # load model
     model = ser.model.Net().to(device)
@@ -45,6 +49,10 @@ def train(
     training_dataloader, validation_dataloader = ser.data.get_dataloaders(batch_size, ts)
 
     # train
+    best_val_acc = 0
+    best_epoch = 0
+    best_model = model
+
     for epoch in range(epochs):
 
         loss = ser.train.train(model, training_dataloader, optimizer, device)
@@ -58,6 +66,15 @@ def train(
             f"Val Epoch: {epoch} | Avg Loss: {val_loss:.4f} | Accuracy: {val_acc}"
         )
 
+        if val_acc > best_val_acc:
+            best_val_acc = val_acc
+            best_epoch = epoch
+            best_model = model
+
+    # Update model params
+    ser.manage_exp_dir.save_model_params(exp_dir, name, epochs, batch_size, learning_rate, best_val_acc=best_val_acc, best_val_acc_epoch=best_epoch)
+    ser.manage_exp_dir.save_model(exp_dir, best_model, name)
+    
 
 @main.command()
 def infer():
