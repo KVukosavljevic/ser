@@ -4,8 +4,9 @@ from torch import optim
 
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from torchvision import datasets, transforms
+from torchvision import datasets
 import ser.model
+from ser.transforms import transforms
 
 import typer
 
@@ -42,9 +43,9 @@ def train(
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
     # torch transforms
-    ts = transforms.Compose(
-        [transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))]
-    )
+    ts = transforms()
+    
+    
 
     # dataloaders
     training_dataloader = DataLoader(
