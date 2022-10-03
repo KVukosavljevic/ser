@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+from typing import List
 
 import typer
 import torch
@@ -67,20 +68,30 @@ def infer(
     label: int = typer.Option(
         6, "-l", "--label", help="Label of image to show to the model"
     ),
+    transforms: List[str] = typer.Option(
+        ["normalize"],
+        "--transforms",
+        help="List all transforms you want to be applied in order. Normalize only by default",
+    ),
 ):
     """Run the inference code"""
     params = load_params(run_path)
     model = torch.load(run_path / "model.pt")
-    image = _select_test_image(label)
+
+    ts = _convert_to_transforms(transforms)
+    image = _select_test_image(label, ts)
     run_infer(params, model, image, label)
 
 
-def _select_test_image(label):
+def _convert_to_transforms(transforms):
+    return [eval(tf) for tf in transforms]
+
+
+def _select_test_image(label, ts):
     # TODO `ts` is a list of transformations that will be applied to the loaded
     # image. This works... but in order to add a transformation, or change one,
     # we now have to come and edit the code... which sucks. What if we could
     # configure the transformations via the cli?
-    ts = [normalize, flip]
     dataloader = test_dataloader(1, transforms(*ts))
     images, labels = next(iter(dataloader))
     while labels[0].item() != label:
