@@ -86,7 +86,6 @@ def infer(
     dataloader = test_dataloader(1, transforms(normalize))
     images, labels = next(iter(dataloader))
     while labels[0].item() != label:
-        print(labels[0].item())
         images, labels = next(iter(dataloader))
 
     # load the model

@@ -7,7 +7,10 @@ def infer_model(model, images):
     certainty = max(list(torch.exp(output)[0]))
     pixels = images[0][0]
     print(generate_ascii_art(pixels))
-    print(f"This is a {pred}")
+    format_certainty = "{:.2f}".format(certainty*100)
+    print(f"The model predicts a {pred} with a confidence of {format_certainty}%.")
+
+
 
 
 
