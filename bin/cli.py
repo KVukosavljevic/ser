@@ -64,11 +64,15 @@ def infer(
         run: Path = typer.Option(
         ..., "--exp_path", help="Define path to the experiment run."
     ),
+        label: int = typer.Option(
+        ..., "--label", help="Perform inference for an image with this label."
+    ),
 ):
     run_path = run
     label = 6
 
     # TODO load the parameters from the run_path so we can print them out!
+
 
     # select image to run inference for
     dataloader = test_dataloader(1, transforms(normalize))
