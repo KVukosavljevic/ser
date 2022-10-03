@@ -1,10 +1,12 @@
 from cProfile import run
 from datetime import datetime
+from importlib.resources import path
 from pathlib import Path
 
 import typer
 import torch
 import git
+import json
 
 from ser.train import train as run_train
 from ser.constants import RESULTS_DIR
@@ -69,12 +71,17 @@ def infer(
     ),
 ):
     run_path = run
-    label = 6
+    label = label
 
     # TODO load the parameters from the run_path so we can print them out!
+    f = open(run_path/"model_params.json", "r")
+    model_params = json.loads(f.read())
 
+    # print experiment summary
+    print_summary(model_params)
 
     # select image to run inference for
+
     dataloader = test_dataloader(1, transforms(normalize))
     images, labels = next(iter(dataloader))
     while labels[0].item() != label:
@@ -91,7 +98,6 @@ def infer(
     pixels = images[0][0]
     print(generate_ascii_art(pixels))
     print(f"This is a {pred}")
-
 
 def generate_ascii_art(pixels):
     ascii_art = []
@@ -112,3 +118,17 @@ def pixel_to_char(pixel):
         return "."
     else:
         return " "
+
+def print_summary(model_params):
+
+    print("Experiment summary")
+    print("------------------")
+
+    print(f"Experiment name: {model_params['name']}")
+    print(f"Epochs: {model_params['epochs']}")
+    print(f"Batch size: {model_params['batch_size']}")
+    print(f"Learning rate: {model_params['learning_rate']}")
+    print(f"Git commit hash: {model_params['git_commit_hash']}")
+
+    print("------------------")
+
