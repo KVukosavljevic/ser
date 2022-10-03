@@ -1,3 +1,4 @@
+from cProfile import run
 from datetime import datetime
 from pathlib import Path
 
@@ -59,8 +60,12 @@ def train(
 
 
 @main.command()
-def infer():
-    run_path = Path("./path/to/one/of/your/training/runs")
+def infer(
+        run: Path = typer.Option(
+        ..., "--exp_path", help="Define path to the experiment run."
+    ),
+):
+    run_path = run
     label = 6
 
     # TODO load the parameters from the run_path so we can print them out!
