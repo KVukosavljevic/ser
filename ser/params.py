@@ -8,10 +8,12 @@ class Params:
     epochs: int
     batch_size: int
     learning_rate: float
-    commit: str
+    git_commit_hash: str
+    best_val_acc: float
+    best_val_acc_epoch: int
 
 
-PARAMS_FILE = "params.json"
+PARAMS_FILE = "model_params.json"
 
 
 def save_params(run_path, params):
