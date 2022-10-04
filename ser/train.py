@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 
 from ser.model import Net
+from ser.transforms import flip
 
 
 def train(run_path, params, train_dataloader, val_dataloader, device, random_flip):
