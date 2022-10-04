@@ -12,6 +12,7 @@ from ser.data import train_dataloader, val_dataloader, test_dataloader
 from ser.infer import infer as run_infer
 from ser.params import Params, save_params, load_params
 from ser.transforms import transforms, normalize, flip
+from utils import utils
 
 main = typer.Typer()
 
@@ -31,7 +32,7 @@ def train(
         0.01, "-l", "--learning-rate", help="Learning rate for the model."
     ),
     random_flip: float = typer.Option(
-        0.0,
+        1.0,
         "--random-flip",
         help="Randomly flip images with probability between 0 and 1",
     ),
