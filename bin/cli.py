@@ -30,13 +30,18 @@ def train(
     learning_rate: float = typer.Option(
         0.01, "-l", "--learning-rate", help="Learning rate for the model."
     ),
+    random_flip: float = typer.Option(
+        0.0,
+        "--random-flip",
+        help="Randomly flip images with probability between 0 and 1",
+    ),
 ):
     """Run the training algorithm."""
     repo = git.Repo(search_parent_directories=True)
     sha = repo.head.object.hexsha
 
     # wraps the passed in parameters
-    params = Params(name, epochs, batch_size, learning_rate, sha)
+    params = Params(name, epochs, batch_size, learning_rate, sha, 0, 0, random_flip)
 
     # setup device to run on
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -57,6 +62,7 @@ def train(
         train_dataloader(params.batch_size, transforms(normalize)),
         val_dataloader(params.batch_size, transforms(normalize)),
         device,
+        random_flip,
     )
 
 

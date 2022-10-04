@@ -36,7 +36,7 @@ def test_load_params():
     save_params(test_path, test_params)
     loaded_params = load_params(test_path)
 
-    # test whether file exists
+    # test whether loaded params same as the one in the file
     assert loaded_params == test_params
 
     # remove tmpdir

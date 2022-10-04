@@ -11,7 +11,7 @@ class Params:
     git_commit_hash: str
     best_val_acc: float
     best_val_acc_epoch: int
-
+    random_flip: float
 
 PARAMS_FILE = "model_params.json"
 

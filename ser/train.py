@@ -1,11 +1,12 @@
 from torch import optim
 import torch
 import torch.nn.functional as F
+import numpy as np
 
 from ser.model import Net
 
 
-def train(run_path, params, train_dataloader, val_dataloader, device):
+def train(run_path, params, train_dataloader, val_dataloader, device, random_flip):
     # setup model
     model = Net().to(device)
 
@@ -14,16 +15,20 @@ def train(run_path, params, train_dataloader, val_dataloader, device):
 
     # train
     for epoch in range(params.epochs):
-        _train_batch(model, train_dataloader, optimizer, epoch, device)
-        _val_batch(model, val_dataloader, device, epoch)
+        _train_batch(model, train_dataloader, optimizer, epoch, device, random_flip)
+        _val_batch(model, val_dataloader, device, epoch, random_flip)
+
+    # TODO have a second pass with and without flipped to have the two validation accuracies
 
     # save model and save model params
     torch.save(model, run_path / "model.pt")
 
 
-def _train_batch(model, dataloader, optimizer, epoch, device):
+def _train_batch(model, dataloader, optimizer, epoch, device, random_flip):
     for i, (images, labels) in enumerate(dataloader):
         images, labels = images.to(device), labels.to(device)
+        if np.random.rand() < random_flip:
+            images = flip()(images)
         model.train()
         optimizer.zero_grad()
         output = model(images)
